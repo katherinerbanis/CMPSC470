@@ -1,1 +1,69 @@
+#include <stdio.h>
+
+#define WINDOW_ROWS 24
+#define WINDOW_COLS 72
+
+void drawTable(int startingRow, int startingCol, int numRows, int numCols) {
+    // define lines and corners from ASCII table
+    // 201 = top left corner, 187 = top right corner, 200 = bottom left corner, 188 = bottom right corner
+    char line[2][2] = {{(char)201, (char)187}, {(char)200, (char)188}};
+    // 205 = horizontal line
+    char hLine = (char)205;
+    // 186 = vertical line
+    char vLine = (char)186;
+    // draw table
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            char currentChar;
+            // determine character based on position
+            if (i == 0) {
+                // top left corner
+                if (j == 0) {
+                    currentChar = line[0][0];
+                }
+                    // top right corner
+                else if (j == numCols - 1){
+                    currentChar = line[0][1];
+                }
+                    // top border
+                else {
+                    currentChar = hLine;
+                }
+            } // end if statement
+            else if (i == numRows - 1) {
+                // bottom left corner
+                if (j == 0) {
+                    currentChar = line[1][0];
+                }
+                    // bottom right corner
+                else if (j == numCols - 1) {
+                    currentChar = line[1][1];
+                }
+                    // bottom border
+                else {
+                    currentChar = hLine;
+                }
+            } // end else if statement
+            else {
+                // side borders
+                if (j == 0 || j == numCols - 1) {
+                    currentChar = vLine;
+                }
+                    // center
+                else {
+                    currentChar = ' ';
+                }
+            } // end else statement
+            // print character
+            printf("%c", currentChar);
+        } // end for statement (j)
+        // next line
+        printf("\n");
+    } // end for statement (i)
+} // end drawTable function
+
+int main() {
+    drawTable(5, 5, 5, 15);
+    return 0;
+} // end main function
 
