@@ -1,1 +1,70 @@
+# Assignment: Implement 3 Disk Scheduling Algorithms (zybook 11.12)
+# Description: This program simulates the operation of 3 disk scheduling algorithms: FCFS, SCAN, C-SCAN
+# on a disk drive with 5,000 cylinders (0-4,999) and generates a random sequence of 1,000 cylinder requests
+# and services them according to each of the three algorithms.
+# Then reports the total amount of head movement required by each algorithm.
 
+import random
+
+# Constants
+numCylinders = 5000
+numRequests = 1000
+
+# Generate 1,000 cylinder requests
+requests = [random.randint(0, numCylinders - 1) for _ in range(numRequests)]
+
+
+# FCFS Disk Scheduling Algorithm
+def fcfs(requests, start):
+    headMovement = abs(start - requests[0])
+
+    for i in range(1, len(requests)):
+        headMovement += abs(requests[i] - requests[i - 1])
+    return headMovement
+
+
+# SCAN Disk Scheduling Algorithm
+def scan(requests, start):
+    headMovement = 0
+    sortedRequests = sorted(requests)
+    left = [request for request in sortedRequests if request < start]
+    right = [request for request in sortedRequests if request >= start]
+
+    # Move right then left
+    if right:
+        headMovement += abs(start - right[0]) + abs(right[-1] - right[0])
+    if left:
+        headMovement += abs(right[-1] if right else start - left[-1])
+
+    return headMovement
+
+
+# C-SCAN Disk Scheduling Algorithm
+def cScan(requests, start):
+    headMovement = 0
+    sortedRequests = sorted(requests)
+    right = [request for request in sortedRequests if request >= start]
+    left = [request for request in sortedRequests if request < start]
+
+    # Move right to end, jump to beginning, go to rightmost of left
+    if right:
+        headMovement += abs(start - right[0]) + abs(numCylinders - 1 - right[0])
+    if left:
+        headMovement += abs(numCylinders - 1 - 0) + abs(0 - left[-1])
+
+    return headMovement
+
+
+# Initial position of disk head
+initialPosition = 1234
+
+# Apply each algorithm
+fcfsMovement = fcfs(requests, initialPosition)
+scanMovement = scan(requests, initialPosition)
+cScanMovement = cScan(requests, initialPosition)
+
+# print total amount of head movement
+print("Total Head Movement")
+print("FCFS:   ", fcfsMovement)
+print("SCAN:   ", scanMovement)
+print("C-SCAN: ", cScanMovement)
