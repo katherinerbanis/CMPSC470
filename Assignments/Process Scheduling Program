@@ -1,1 +1,112 @@
+# Write a Process Scheduling Program
+# Priority Scheduling using process id, burst cycle, and priority number
+# demonstrates how a CPU works so the process with the highest priority
+#   gets executed first and so on
+# when user presses S: program begins
+# when user presses A: the next process is added to the ready queue
+# when user presses X: exits the program
 
+# create a process: process id, burst cycle, priority level
+class Process:
+    def __init__(self, pid, burst_time, priority):
+        self.pid = pid
+        self.burst_time = burst_time
+        self.priority = priority
+
+    def __repr__(self):
+        return f"PID: {self.pid}, Burst Time: {self.burst_time}, Priority: {self.priority}"
+
+
+# Initialize 8 processes
+processes = [
+    Process(1, 10, 3),
+    Process(2, 1, 4),
+    Process(3, 2, 5),
+    Process(4, 1, 2),
+    Process(5, 5, 1),
+    Process(6, 4, 6),
+    Process(7, 6, 8),
+    Process(8, 3, 7),
+]
+
+# Sort processes based on priority
+processes.sort(key=lambda x: x.priority)
+
+
+# class to manage CPU Scheduling
+class CPUScheduler:
+    def __init__(self, processes):
+        self.ready_queue = processes[:3]
+        self.processes = processes[3:]
+        self.current_process = None
+
+    # display processes currently in ready queue
+    def display_ready_queue(self):
+        print("Ready queue:")
+        for process in self.ready_queue:
+            print(process)
+
+    # start program
+    def start_execution(self):
+        # begin executing processes from ready queue
+        if self.current_process is None and self.ready_queue:
+            self.current_process = self.ready_queue.pop(0)
+            print(f"CPU currently executing: {self.current_process}")
+            self.execute_next()
+        else:
+            print("Execution already in progress or no process in ready queue.")
+
+    # execute next process
+    def execute_next(self):
+        # complete execution of the current process and move to next process to execute
+        print("Process executed:", self.current_process)
+        self.current_process = None
+        # if more processes in ready queue, continue to execute
+        if self.ready_queue:
+            self.current_process = self.ready_queue.pop(0)
+            print(f"CPU now executing: {self.current_process}")
+        # if ready queue is empty, error
+        else:
+            print("No more processes in the ready queue.")
+        self.display_ready_queue()
+
+    # add next process to the ready queue
+    def add_process(self):
+        # add next process from waiting list to ready queue if available
+        if self.processes:
+            added_process = self.processes.pop(0)
+            self.ready_queue.append(added_process)
+            print(f"Added to ready queue: {added_process}")
+        # if there are no more processes, error
+        else:
+            print("No more processes to add.")
+        self.display_ready_queue()
+
+
+# initialize CPU scheduler with sorted list of processes
+cpu_scheduler = CPUScheduler(processes)
+
+# Display the initial ready queue
+cpu_scheduler.display_ready_queue()
+
+# commands: S = Start, A = Add next process to ready queue, X = exit
+# added execute next
+while True:
+    # list commands
+    command = input("Enter command (S: Start, E: Execute, A: Add, X: Exit): ").strip().upper()
+    # start program
+    if command == "S":
+        cpu_scheduler.start_execution()
+    # execute next process
+    elif command == "E":
+        cpu_scheduler.execute_next()
+    # add next process to ready queue
+    elif command == "A":
+        cpu_scheduler.add_process()
+    # exit program
+    elif command == "X":
+        print("Exiting program.")
+        break
+    # wrong input, error
+    else:
+        print("Invalid command.")
