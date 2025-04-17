@@ -1,1 +1,45 @@
+# Parent Process starts up two child processes
+# Process prints error message when either do not start up, when they do start up, and when they end.
 
+import subprocess
+import time
+
+
+# Parent process gets filePath and starts up the child processes
+# Exception when parent process cannot get filePath or start up either child process
+def spawn(filePath):
+    try:
+        process = subprocess.Popen(filePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"Started process for {filePath}")
+        return process
+    except Exception as e:
+        print(f"Error starting process for {filePath}: {e}")
+        return None
+
+
+# checks that both child process are still running
+def checkProgress(child):
+    return child.poll() is None if child else False
+
+
+def main():
+    # assigns filepath to child process
+    child1 = spawn("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word.lnk")
+    child2 = spawn("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Excel.lnk")
+
+    # if there is an error for either child process
+    if not (child1 and child2):
+        print("Error starting one or more processes. Exiting...")
+        return
+
+    print("Processes starting...")
+
+    # checks that each child process is still running, when both processes end, exit while loop
+    while checkProgress(child1) or checkProgress(child2):
+        time.sleep(1)
+
+    print("All processes have ended. Exiting program...")
+
+
+if __name__ == "__main__":
+    main()
