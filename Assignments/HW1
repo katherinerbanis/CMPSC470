@@ -1,0 +1,62 @@
+# Write a MIPS Assembly Program for a Solution- 
+# Decimal to Binary Conversion
+
+.data
+name: .asciiz "Katherine Banis"
+prompt: .asciiz "Enter an Integer: "
+resultLabel: .asciiz "Binary Equivalent: "
+newLine: .asciiz "\n"
+buffer: .space 33
+
+.text
+.globl main
+
+main:
+	# print name
+	li $v0, 4
+	la $a0, name
+	syscall
+	
+	# new line
+	la $a0, newLine
+	syscall
+	
+	# print prompt
+	li $v0, 4
+	la $a0, prompt
+	syscall
+	
+	# read integer
+	li $v0, 5
+	syscall
+	move $t0, $v0 
+	
+	# buffer
+	la $a1, buffer
+	addi $a1, $a1, 32
+	sb $zero, 0($a1)
+	
+# convert decimal to binary
+convertLoop:
+	li $t1, 2
+	div $t0, $t1
+	mfhi $t2
+	mflo $t0
+	addi $t2, $t2, '0'
+	addi $a1, $a1, -1
+	sb $t2, 0($a1)
+	bnez $t0, convertLoop
+	
+	# print result label
+	li $v0, 4
+	la $a0, resultLabel
+	syscall
+	
+	# print result
+	li $v0, 4
+	move $a0, $a1
+	syscall
+	
+	# exit program
+	li $v0, 10
+	syscall
