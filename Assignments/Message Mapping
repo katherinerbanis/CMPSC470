@@ -1,0 +1,47 @@
+# Description: Efficiently store and retrieve messages, ensuring no word is stored more than once.
+
+def readMessage(filename):
+    # dictionary to store each word with its index
+    wordIndex = {}
+    # list to store messages as lists of word indices
+    messages = []
+    # list to store unique words
+    uniqueWords = []
+
+    # read message from text file and process each line
+    with open(filename, 'r') as file:
+        for line in file:
+            messageIndices = []
+            for word in line.strip().split():
+                if word not in wordIndex:
+                    wordIndex[word] = len(uniqueWords)
+                    uniqueWords.append(word)
+                messageIndices.append(wordIndex[word])
+            messages.append(messageIndices)
+
+    return messages, uniqueWords
+
+
+# retrieves message from stored indices
+def retrieveMessage(messages, uniqueWords, messageNum):
+    if 0 <= messageNum < len(messages):
+        return ' '.join(uniqueWords[index] for index in messages[messageNum])
+    return "Invalid message number."
+
+
+def main():
+    filename = input("Enter the name of the text file with messages: ")
+    messages, uniqueWords = readMessage(filename)
+    print(f"Total unique words: {len(uniqueWords)}")
+    print("Unique words: ", uniqueWords)
+
+    # prompts user to enter message number to retrieve
+    while True:
+        messageNum = int(input("Enter the message number to retrieve (or -1 to quit): "))
+        if messageNum == -1:
+            break
+        print(retrieveMessage(messages, uniqueWords, messageNum))
+
+
+if __name__ == "__main__":
+    main()
